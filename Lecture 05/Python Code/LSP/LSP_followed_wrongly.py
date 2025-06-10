@@ -1,0 +1,73 @@
+# filepath: c:\Users\ankus\Desktop\LLD\LLD\Lecture 05\Python Code\LSP\LSP_followed_wrongly.py
+
+# This file demonstrates a violation of the Liskov Substitution Principle (LSP).
+
+class Car:
+    def start_engine(self):
+        self.is_engine_on = True
+        print(f"{self.brand} {self.model} : Engine started.")
+
+    def stop_engine(self):
+        self.is_engine_on = False
+        self.current_speed = 0
+        print(f"{self.brand} {self.model} : Engine turned off.")
+
+    def accelerate(self):
+        raise NotImplementedError("Subclasses must implement this method.")
+
+class ManualCar(Car):
+    def __init__(self, brand, model):
+        self.brand = brand
+        self.model = model
+        self.is_engine_on = False
+        self.current_speed = 0
+        self.current_gear = 0
+
+    def shift_gear(self, gear):
+        self.current_gear = gear
+        print(f"{self.brand} {self.model} : Shifted to gear {self.current_gear}")
+
+    def accelerate(self):
+        if not self.is_engine_on:
+            print(f"{self.brand} {self.model} : Cannot accelerate! Engine is off.")
+            return
+        self.current_speed += 20
+        print(f"{self.brand} {self.model} : Accelerating to {self.current_speed} km/h")
+
+class ElectricCar(Car):
+    def __init__(self, brand, model):
+        self.brand = brand
+        self.model = model
+        self.is_engine_on = False
+        self.current_speed = 0
+        self.battery_level = 100
+
+    def charge_battery(self):
+        self.battery_level = 100
+        print(f"{self.brand} {self.model} : Battery fully charged!")
+
+    def accelerate(self):
+        if not self.is_engine_on:
+            print(f"{self.brand} {self.model} : Cannot accelerate! Engine is off.")
+            return
+        if self.battery_level <= 0:
+            print(f"{self.brand} {self.model} : Battery dead! Cannot accelerate.")
+            return
+        self.battery_level -= 10
+        self.current_speed += 15
+        print(f"{self.brand} {self.model} : Accelerating to {self.current_speed} km/h. Battery at {self.battery_level}%.")
+
+# Example usage
+def main():
+    car1 = ManualCar("Toyota", "Corolla")
+    car1.start_engine()
+    car1.shift_gear(2)
+    car1.accelerate()
+
+    car2 = ElectricCar("Tesla", "Model S")
+    car2.start_engine()
+    car2.charge_battery()
+    car2.accelerate()
+
+if __name__ == "__main__":
+    main()
